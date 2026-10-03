@@ -156,5 +156,40 @@ int main() {
     printf("\n");
     printf("=======================================================================\n");
 
+
+    // Bagian 3: Scheduling Table
+    // CT dan first start dicari dari array gantt[]
+    printf("\n=======================================================================\n");
+    printf("SCHEDULING TABLE\n");
+    printf("=======================================================================\n");
+    printf("%-8s %-6s %-6s %-6s %-6s %-6s %-6s\n", "PID","AT","BT","CT","TAT","WT","RT");
+    printf("-----------------------------------------------------------------------\n");
+
+    double sum_wt = 0, sum_tat = 0, sum_rt = 0;
+    for (int i = 0; i < n; i++) {
+        int first_start = -1, ct = 0;
+        for (int g = 0; g < gantt_count; g++) {
+            if (strcmp(gantt[g].pid, p[i].pid) == 0) {
+                if (first_start == -1) first_start = gantt[g].start; // blok pertama
+                ct = gantt[g].end;                                   // blok terakhir (urut waktu)
+            }
+        }
+        int tat = ct - p[i].arrival_time;        // TAT = CT - AT
+        int wt  = tat - p[i].burst_time;         // WT  = TAT - BT
+        int rt  = first_start - p[i].arrival_time; // RT = start pertama - AT
+        sum_wt += wt; sum_tat += tat; sum_rt += rt;
+        printf("%-8s %-6d %-6d %-6d %-6d %-6d %-6d\n", p[i].pid,
+            p[i].arrival_time, p[i].burst_time, ct, tat, wt, rt);
+    }
+    printf("=======================================================================\n\n");
+
+    // Bagian 4: Nilai rata-rata
+    printf("=======================================================================\n");
+    printf("SCHEDULING PERFORMANCE\n");
+    printf("=======================================================================\n");
+    printf("Average Waiting Time    : %.2f\n", sum_wt / n);
+    printf("Average Turnaround Time : %.2f\n", sum_tat / n);
+    printf("Average Response Time   : %.2f\n", sum_rt / n);
+    printf("=======================================================================\n");
     return 0;
 }
