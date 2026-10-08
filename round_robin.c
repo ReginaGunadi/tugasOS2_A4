@@ -228,5 +228,30 @@ int main() {
     printf("=======================================================================\n");
     printf("Total Context Switch : %d\n", context_switch_counter);
 
+
+    // Bagian 7: Process State Transitions
+    printf("=======================================================================\n");
+    printf("PROCESS STATE TRANSITIONS\n");
+    printf("=======================================================================\n");
+
+    for (int i = 0; i < n; i++) {
+        printf("P%d: NEW", i+1);  // Start dari process
+        int end = p[i].arrival_time;  // end disimpan untuk dicetak READY ataupun TERMINATED
+                                      // READY yang pertama adalah saat proses itu datang pertama kali
+
+        for (int g = 0; g < gantt_count; g++) {
+            if (strcmp(gantt[g].pid, p[i].pid) == 0) {
+                printf(" -> READY(t=%d)", end);  // cetak end yang ternyata bukan akhir eksekusi
+                printf(" -> RUNNING(t=%d)", gantt[g].start);
+
+                end = gantt[g].end;  // ganti end menjadi akhiran gantt
+                                     // saat loop selesai (gantt chart habis)
+                                     // end akan dicetak oleh TERMINATED
+            }
+        }
+
+        printf(" -> TERMINATED(t=%d)\n", end);
+    }
+
     return 0;
 }
