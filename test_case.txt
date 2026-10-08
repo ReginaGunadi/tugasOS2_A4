@@ -6,7 +6,7 @@ Test Case 3:
 
 Test Case 4: 
 
-Test Case 5 (Edge Case: No Priority + Idle CPU)
+Test Case 5 (Edge Case: No Priority + CPU Idle Condition)
 Input : 
     Jumlah proses : 3
     Time quantum : 2
@@ -24,13 +24,12 @@ Output :
         P3                             10                    2
     Bagian 2 : 
         | P1 | P2 | P1 | P2 | P1 | Idle | P3 |
-        0    2    4    6    7    8     10    12
+        0    2    4    6    7    8      10   12
 
         t=2 : quantum P1 habis (sisa BT=3) -> READY
         t=4 : quantum P2 habis (sisa BT=1) -> READY
         t=6 : quantum P1 habis (sisa BT=1) -> READY
         Total Preemption : 3
-
     Bagian 3 :
         PID      AT     BT     CT     TAT    WT     RT    
         -----------------------------------------------------------------------
