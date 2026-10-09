@@ -144,7 +144,7 @@ int main() {
 
     // Looping utama scheduling sampai semua proses selesai
     while (completed < n) {
-        if (queue.front == queue.rear) {
+        if (queue.front == NULL) {
             int next_arrival = -1;
             for (int i = 0; i < n; i++) {
                 if (p[i].remaining_time > 0 && p[i].arrival_time > current_time) {
@@ -173,20 +173,7 @@ int main() {
                     if (p[i].arrival_time <= current_time && p[i].remaining_time > 0 && !in_queue[i]) {
                         queue_enqueue(&queue, i);
                         in_queue[i] = 1;
-                    } else { // O(N^2) cari apakah i ada dalam Queue, dan setting in_queue[i]
-                        struct QueueNode *node = queue.front;
-                        int found = 0;
-                        while (node) { // Loop hingga NULL
-                            if (node->value == i) {
-                                found = 1;
-                                break;
-                            }
-                            node = node->next;
-                        }
-
-                        in_queue[i] = found;
                     }
-
                 }
             } else {
                 current_time++;
@@ -243,18 +230,6 @@ int main() {
             if (p[i].arrival_time <= current_time && p[i].remaining_time > 0 && !in_queue[i]) {
                 queue_enqueue(&queue, i);
                 in_queue[i] = 1;
-            } else { 
-                struct QueueNode *node = queue.front;
-                int found = 0;
-                while (node) {
-                    if (node->value == i) {
-                        found = 1;
-                        break;
-                    }
-                    node = node->next;
-                }
-
-                in_queue[i] = found;
             }
         }
 
@@ -389,3 +364,4 @@ int main() {
 
     return 0;
 }
+
