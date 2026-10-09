@@ -23,6 +23,60 @@ struct PreemptionLog {
     int remaining_time;
 };
 
+struct QueueNode {
+    struct QueueNode *next;
+    int value;
+};
+
+struct Queue {
+    struct QueueNode *front;
+    struct QueueNode *rear;
+};
+
+void queue_enqueue(struct Queue* q, int value) {
+    struct QueueNode* node = (struct QueueNode *) malloc(sizeof(struct QueueNode));
+    if (!node) return;
+
+    node->value = value;
+    node->next = NULL;
+
+    if (q->rear) {
+        q->rear->next = node;
+    } else {
+        q->front = node;
+    }
+
+    q->rear = node;
+}
+
+int queue_dequeue(struct Queue *q) {
+    if (q->front == NULL) return -1;
+
+    struct QueueNode* node = q->front;
+    int value = node->value;
+
+    q->front = node->next;
+    if (q->front == NULL) {
+        q->rear = NULL;
+    }
+
+    free(node);
+    return value;
+}
+
+void queue_free(struct Queue *q) {
+    struct QueueNode* node = q->front;
+
+    while (node) {
+        struct QueueNode* next = node->next;
+        free(node);
+        node = next;
+    }
+
+    q->front = NULL;
+    q->rear = NULL;
+}
+
 // Main code
 int main() {
     int n, time_quantum;
