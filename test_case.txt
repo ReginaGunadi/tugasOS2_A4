@@ -46,6 +46,6 @@ Output :
     Bagian 6 : 
         Total Context Switch : 5
     Bagian 7 : 
-        P1 : NEW -> READY (t=0) -> RUNNING (t=0) -> TERMINATED (t=8)
-        P2 : NEW -> READY (t=0) -> RUNNING (t=2) -> TERMINATED (t=7)
-        P3 : NEW -> READY (t=10) -> RUNNING (t=10) -> TERMINATED (t=12)
+        P1: NEW -> READY(t=0) -> RUNNING(t=0) -> READY(t=2) -> RUNNING(t=4) -> READY(t=6) -> RUNNING(t=7) -> TERMINATED(t=8)
+        P2: NEW -> READY(t=0) -> RUNNING(t=2) -> READY(t=4) -> RUNNING(t=6) -> TERMINATED(t=7)
+        P3: NEW -> READY(t=10) -> RUNNING(t=10) -> TERMINATED(t=12)
