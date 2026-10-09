@@ -15,7 +15,9 @@ Pembagian tugas:
     - Bagian 5 - CPU Utilization dan Throughput [REGINA]
     - Bagian 6 - Context Switch [REGINA]
     - Bagian 7 - Process State [FAEIZ]
-    - Output Khusus Round Robin [FAEIZ]
+    - Output Khusus Round Robin [CELINE]
+    - Pembuatan & Pengintegrasian Array Dinamis [CELINE]
+    - Pembuatan & Pengintegrasian Queue [FAEIZ]
 2. Pembuatan Test Cases:
     - Kondisi Normal: [FAEIZ]
     - Arrival Time Berbeda [FAEIZ]
