@@ -1,6 +1,212 @@
-Test Case 1:
+Test Case 1: Normal 
 
-Test Case 2: 
+- Time Quantum 1
+Input :
+    Jumlah proses : 5
+    Time Quantum : 1
+    Process 1 arrival time - burst time : 0 5
+    Process 2 arrival time - burst time : 0 3
+    Process 3 arrival time - burst time : 0 2
+    Process 4 arrival time - burst time : 0 1
+    Process 5 arrival time - burst time : 0 2
+
+Output :
+    Bagian 1 :
+        Time Quantum : 1
+        PID        Arrival Time    Burst Time  
+        -----------------------------------------------------------------------
+        P1         0               5           
+        P2         0               3           
+        P3         0               2           
+        P4         0               1           
+        P5         0               2           
+    Bagian 2 :
+        | P1 | P2 | P3 | P4 | P5 | P1 | P2 | P3 | P5 | P1 | P2 | P1 | P1 |
+        0    1    2    3    4    5    6    7    8    9   10   11   12   13
+    Bagian Output Khusus :
+        t=1 : quantum P1 habis (sisa BT=4) -> READY
+        t=2 : quantum P2 habis (sisa BT=2) -> READY
+        t=3 : quantum P3 habis (sisa BT=1) -> READY
+        t=5 : quantum P5 habis (sisa BT=1) -> READY
+        t=6 : quantum P1 habis (sisa BT=3) -> READY
+        t=7 : quantum P2 habis (sisa BT=1) -> READY
+        t=10 : quantum P1 habis (sisa BT=2) -> READY
+        t=12 : quantum P1 habis (sisa BT=1) -> READY
+        Total Preemption : 8
+    Bagian 3 :
+        PID      AT     BT     CT     TAT    WT     RT    
+        -----------------------------------------------------------------------
+        P1       0      5      13     13     8      0     
+        P2       0      3      11     11     8      1     
+        P3       0      2      8      8      6      2     
+        P4       0      1      4      4      3      3     
+        P5       0      2      9      9      7      4     
+    Bagian 4 :
+        Average Waiting Time    : 6.40
+        Average Turnaround Time : 9.00
+        Average Response Time   : 2.00
+    Bagian 5 :
+        CPU Utilization      : 100.00%
+        Throughput           : 0.38 process/time unit
+    Bagian 6 :
+        Total Context Switch : 11
+    Bagian 7 :
+        P1: NEW -> READY(t=0) -> RUNNING(t=0) -> READY(t=1) -> RUNNING(t=5) -> READY(t=6) -> RUNNING(t=9) -> READY(t=10) -> RUNNING(t=11) -> R
+        EADY(t=12) -> RUNNING(t=12) -> TERMINATED(t=13)
+        P2: NEW -> READY(t=0) -> RUNNING(t=1) -> READY(t=2) -> RUNNING(t=6) -> READY(t=7) -> RUNNING(t=10) -> TERMINATED(t=11)
+        P3: NEW -> READY(t=0) -> RUNNING(t=2) -> READY(t=3) -> RUNNING(t=7) -> TERMINATED(t=8)
+        P4: NEW -> READY(t=0) -> RUNNING(t=3) -> TERMINATED(t=4)
+        P5: NEW -> READY(t=0) -> RUNNING(t=4) -> READY(t=5) -> RUNNING(t=8) -> TERMINATED(t=9)
+
+- Time Quantum 2
+Input :
+    Jumlah proses : 5
+    Time Quantum : 2
+    Process 1 arrival time - burst time : 0 5
+    Process 2 arrival time - burst time : 0 3
+    Process 3 arrival time - burst time : 0 2
+    Process 4 arrival time - burst time : 0 1
+    Process 5 arrival time - burst time : 0 2
+
+Output :
+    Bagian 1 :
+        Time Quantum : 2
+        PID        Arrival Time    Burst Time  
+        -----------------------------------------------------------------------
+        P1         0               5           
+        P2         0               3           
+        P3         0               2           
+        P4         0               1           
+        P5         0               2           
+    Bagian 2 :
+        | P1 | P2 | P3 | P4 | P5 | P1 | P2 | P1 |
+        0    2    4    6    7    9   11   12   13
+    Bagian Output Khusus :
+        t=2 : quantum P1 habis (sisa BT=3) -> READY
+        t=4 : quantum P2 habis (sisa BT=1) -> READY
+        t=11 : quantum P1 habis (sisa BT=1) -> READY
+        Total Preemption : 3
+    Bagian 3 :
+        PID      AT     BT     CT     TAT    WT     RT    
+        -----------------------------------------------------------------------
+        P1       0      5      13     13     8      0     
+        P2       0      3      12     12     9      2     
+        P3       0      2      6      6      4      4     
+        P4       0      1      7      7      6      6     
+        P5       0      2      9      9      7      7     
+    Bagian 4 :
+        Average Waiting Time    : 6.80
+        Average Turnaround Time : 9.40
+        Average Response Time   : 3.80
+    Bagian 5 :
+        CPU Utilization      : 100.00%
+        Throughput           : 0.38 process/time unit
+    Bagian 6 :
+        Total Context Switch : 7
+    Bagian 7 :
+        P1: NEW -> READY(t=0) -> RUNNING(t=0) -> READY(t=2) -> RUNNING(t=9) -> READY(t=11) -> RUNNING(t=12) -> TERMINATED(t=13)
+        P2: NEW -> READY(t=0) -> RUNNING(t=2) -> READY(t=4) -> RUNNING(t=11) -> TERMINATED(t=12)
+        P3: NEW -> READY(t=0) -> RUNNING(t=4) -> TERMINATED(t=6)
+        P4: NEW -> READY(t=0) -> RUNNING(t=6) -> TERMINATED(t=7)
+        P5: NEW -> READY(t=0) -> RUNNING(t=7) -> TERMINATED(t=9)
+
+- Time Quantum 4
+Input :
+    Jumlah proses : 5
+    Time Quantum : 4
+    Process 1 arrival time - burst time : 0 5
+    Process 2 arrival time - burst time : 0 3
+    Process 3 arrival time - burst time : 0 2
+    Process 4 arrival time - burst time : 0 1
+    Process 5 arrival time - burst time : 0 2
+
+Output :
+    Bagian 1 :
+        Time Quantum : 4
+        PID        Arrival Time    Burst Time  
+        -----------------------------------------------------------------------
+        P1         0               5           
+        P2         0               3           
+        P3         0               2           
+        P4         0               1           
+        P5         0               2           
+    Bagian 2 :
+        | P1 | P2 | P3 | P4 | P5 | P1 |
+        0    4    7    9   10   12   13
+    Bagian Output Khusus :
+        t=4 : quantum P1 habis (sisa BT=1) -> READY
+        Total Preemption : 1
+    Bagian 3 :
+        PID      AT     BT     CT     TAT    WT     RT    
+        -----------------------------------------------------------------------
+        P1       0      5      13     13     8      0     
+        P2       0      3      7      7      4      4     
+        P3       0      2      9      9      7      7     
+        P4       0      1      10     10     9      9     
+        P5       0      2      12     12     10     10    
+    Bagian 4 :
+        Average Waiting Time    : 7.60
+        Average Turnaround Time : 10.20
+        Average Response Time   : 6.00
+    Bagian 5 :
+        CPU Utilization      : 100.00%
+        Throughput           : 0.38 process/time unit
+    Bagian 6 :
+        Total Context Switch : 5
+    Bagian 7 :
+        P1: NEW -> READY(t=0) -> RUNNING(t=0) -> READY(t=4) -> RUNNING(t=12) -> TERMINATED(t=13)
+        P2: NEW -> READY(t=0) -> RUNNING(t=4) -> TERMINATED(t=7)
+        P3: NEW -> READY(t=0) -> RUNNING(t=7) -> TERMINATED(t=9)
+        P4: NEW -> READY(t=0) -> RUNNING(t=9) -> TERMINATED(t=10)
+        P5: NEW -> READY(t=0) -> RUNNING(t=10) -> TERMINATED(t=12)
+
+Test Case 2 (Arrival Time Berbeda):
+Input :
+    Jumlah proses : 4
+    Time quantum : 2
+    Process 1 arrival time - burst time : 0 5
+    Process 2 arrival time - burst time : 5 2
+    Process 3 arrival time - burst time : 1 4
+    Process 4 arrival time - burst time : 10 3
+
+Output :
+    Bagian 1 :
+Time Quantum : 2
+        PID        Arrival Time    Burst Time  
+        -----------------------------------------------------------------------
+        P1         0               5           
+        P2         5               2           
+        P3         1               2           
+        P4         10              3           
+    Bagian 2 :
+        | P1 | P3 | P1 | P2 | P1 | Idle | P4 | P4 |
+        0    2    4    6    8    9     10   12   13
+    Bagian Output Khusus :
+        t=2 : quantum P1 habis (sisa BT=3) -> READY
+        t=6 : quantum P1 habis (sisa BT=1) -> READY
+        t=12 : quantum P4 habis (sisa BT=1) -> READY
+        Total Preemption : 3
+    Bagian 3 :
+        PID      AT     BT     CT     TAT    WT     RT    
+        -----------------------------------------------------------------------
+        P1       0      5      9      9      4      0     
+        P2       5      2      8      3      1      1     
+        P3       1      2      4      3      1      1     
+        P4       10     3      13     3      0      0     
+    Bagian 4 :
+        Average Waiting Time    : 1.50
+        Average Turnaround Time : 4.50
+        Average Response Time   : 0.50
+    Bagian 5 :
+        CPU Utilization      : 92.31%
+        Throughput           : 0.31 process/time unit
+    Bagian 6 :
+        Total Context Switch : 5
+    Bagian 7 :
+        P1: NEW -> READY(t=0) -> RUNNING(t=0) -> READY(t=2) -> RUNNING(t=4) -> READY(t=6) -> RUNNING(t=8) -> TERMINATED(t=9)
+        P2: NEW -> READY(t=5) -> RUNNING(t=6) -> TERMINATED(t=8)
+        P3: NEW -> READY(t=1) -> RUNNING(t=2) -> TERMINATED(t=4)
+        P4: NEW -> READY(t=10) -> RUNNING(t=10) -> READY(t=12) -> RUNNING(t=12) -> TERMINATED(t=13)
 
 Test Case 3 (Burst Time Berbeda Signifikan):
 Input :
