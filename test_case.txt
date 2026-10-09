@@ -2,7 +2,55 @@ Test Case 1:
 
 Test Case 2: 
 
-Test Case 3: 
+Test Case 3 (Burst Time Berbeda Signifikan):
+Input :
+    Jumlah proses : 4
+    Time quantum : 3
+    Process 1 arrival time - burst time : 0 12
+    Process 2 arrival time - burst time : 0 2
+    Process 3 arrival time - burst time : 2 7
+    Process 4 arrival time - burst time : 5 3
+
+Output :
+    Bagian 1 :
+        Time Quantum : 3
+        PID        Arrival Time     Burst Time
+        -----------------------------------------------------------------------
+        P1                  0             12
+        P2                  0              2
+        P3                  2              7
+        P4                  5              3
+    Bagian 2 :
+        | P1 | P2 | P3 | P1 | P4 | P3 | P1 | P3 | P1 |
+        0    3    5    8   11   14   17   20   21   24
+    Bagian Output Khusus :
+        t=3  : quantum P1 habis (sisa BT=9) -> READY
+        t=8  : quantum P3 habis (sisa BT=4) -> READY
+        t=11 : quantum P1 habis (sisa BT=6) -> READY
+        t=17 : quantum P3 habis (sisa BT=1) -> READY
+        t=20 : quantum P1 habis (sisa BT=3) -> READY
+        Total Preemption : 5
+    Bagian 3 :
+        PID      AT     BT     CT     TAT    WT     RT    
+        -----------------------------------------------------------------------
+        P1       0      12     24     24     12     0     
+        P2       0      2      5      5      3      3     
+        P3       2      7      21     19     12     3     
+        P4       5      3      14     9      6      6
+    Bagian 4 :
+        Average Waiting Time    : 8.25
+        Average Turnaround Time : 14.25
+        Average Response Time   : 3.00
+    Bagian 5 :
+        CPU Utilization      : 100.00%
+        Throughput           : 0.17 process/time unit
+    Bagian 6 :
+        Total Context Switch : 8
+    Bagian 7 :
+        P1: NEW -> READY(t=0) -> RUNNING(t=0) -> READY(t=3) -> RUNNING(t=8) -> READY(t=11) -> RUNNING(t=17) -> READY(t=20) -> RUNNING(t=21) -> TERMINATED(t=24)
+        P2: NEW -> READY(t=0) -> RUNNING(t=3) -> TERMINATED(t=5)
+        P3: NEW -> READY(t=2) -> RUNNING(t=5) -> READY(t=8) -> RUNNING(t=14) -> READY(t=17) -> RUNNING(t=20) -> TERMINATED(t=21)
+        P4: NEW -> READY(t=5) -> RUNNING(t=11) -> TERMINATED(t=14)
 
 Test Case 4: 
 
