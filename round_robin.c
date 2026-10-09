@@ -44,7 +44,7 @@ int main() {
         snprintf(p[i].pid, sizeof(p[i].pid), "P%d", i + 1);
         printf("%s - masukkan Arrival Time dan Burst Time: ", p[i].pid);
         scanf("%d %d", &p[i].arrival_time, &p[i].burst_time);
-        p[i].remaining_time = p[i].burst_time;
+        p[i].remaining_time = p[i].burst_time; // Set remaining time awal sama dengan burst time
     }
     printf("\n");
 
@@ -121,6 +121,7 @@ int main() {
 
                 current_time = next_arrival;
 
+                // Masukkan proses yang datang pada waktu tersebut ke queue
                 for (int i = 0; i < n; i++) {
                     if (p[i].arrival_time <= current_time && p[i].remaining_time > 0 && !in_queue[i]) {
                         queue[rear++] = i;
@@ -136,6 +137,7 @@ int main() {
         // Ambil proses dari depan antrean
         int idx = queue[front++];
 
+        // Bagian 6: Perbarui jumlah context switch bila process idx != process idx sebelumnya
         if (last_process_idx != -1 && idx != last_process_idx){
             context_switch_counter++; 
         }
@@ -176,6 +178,7 @@ int main() {
             preemption_count++;
         }
 
+        // Cek proses lain yang baru datang
         for (int i = 0; i < n; i++) {
             if (p[i].arrival_time <= current_time && p[i].remaining_time > 0 && !in_queue[i]) {
                 queue[rear++] = i;
@@ -195,12 +198,14 @@ int main() {
     printf("CPU EXECUTION TIMELINE (GANTT CHART)\n");
     printf("=======================================================================\n");
     
+    // Print kotak proses
     printf("|");
     for (int i = 0; i < gantt_count; i++) {
         printf(" %s |", gantt[i].pid);
     }
     printf("\n");
     
+    // Print angka timeline di bawahnya
     printf("%d", gantt[0].start);
     for (int i = 0; i < gantt_count; i++) {
         int space_len = strlen(gantt[i].pid) + 3;
@@ -221,6 +226,7 @@ int main() {
     printf("Total Preemption : %d\n", preemption_count);
 
     // Bagian 3: Scheduling Table
+    // CT dan first start dicari dari array gantt[]
     printf("\n=======================================================================\n");
     printf("SCHEDULING TABLE\n");
     printf("=======================================================================\n");
@@ -232,13 +238,13 @@ int main() {
         int first_start = -1, ct = 0;
         for (int g = 0; g < gantt_count; g++) {
             if (strcmp(gantt[g].pid, p[i].pid) == 0) {
-                if (first_start == -1) first_start = gantt[g].start;
-                ct = gantt[g].end;
+                if (first_start == -1) first_start = gantt[g].start; // blok pertama
+                ct = gantt[g].end;                                   // blok terakhir (urut waktu)
             }
         }
-        int tat = ct - p[i].arrival_time;
-        int wt  = tat - p[i].burst_time;
-        int rt  = first_start - p[i].arrival_time;
+        int tat = ct - p[i].arrival_time;        // TAT = CT - AT
+        int wt  = tat - p[i].burst_time;         // WT  = TAT - BT
+        int rt  = first_start - p[i].arrival_time; // RT = start pertama - AT
         sum_wt += wt; sum_tat += tat; sum_rt += rt;
         printf("%-8s %-6d %-6d %-6d %-6d %-6d %-6d\n", p[i].pid,
             p[i].arrival_time, p[i].burst_time, ct, tat, wt, rt);
@@ -255,8 +261,10 @@ int main() {
     printf("=======================================================================\n");
 
     // Bagian 5: Utilisasi CPU dan Throughput
-    double total_simulation_time = current_time; 
-    double total_busy_time = 0;
+    // Rumus: CPU Utilization = (CPU Busy Time/Total Simulation Time) * 100%
+    //        Throughput = Jumlah Process Selesai/Total Simulation Time
+    double total_simulation_time = current_time;   // waktu selesai proses 
+    double total_busy_time = 0;                    // burst time (waktu kerja CPU)
 
     for (int i = 0; i < n; i++){
         total_busy_time += p[i].burst_time;
@@ -282,21 +290,25 @@ int main() {
     printf("=======================================================================\n");
 
     for (int i = 0; i < n; i++) {
-        printf("P%d: NEW", i+1);
-        int end = p[i].arrival_time;
+        printf("P%d: NEW", i+1);  // Start dari process
+        int end = p[i].arrival_time;  // end disimpan untuk dicetak READY ataupun TERMINATED
+                                      // READY yang pertama adalah saat proses itu datang pertama kali
 
         for (int g = 0; g < gantt_count; g++) {
             if (strcmp(gantt[g].pid, p[i].pid) == 0) {
-                printf(" -> READY(t=%d)", end);
+                printf(" -> READY(t=%d)", end);  // cetak end yang ternyata bukan akhir eksekusi
                 printf(" -> RUNNING(t=%d)", gantt[g].start);
-                end = gantt[g].end;
+
+                end = gantt[g].end;  // ganti end menjadi akhiran gantt
+                                     // saat loop selesai (gantt chart habis)
+                                     // end akan dicetak oleh TERMINATED
             }
         }
 
         printf(" -> TERMINATED(t=%d)\n", end);
     }
 
-    // Bebaskan memori yang sudah di-malloc
+    // Bebaskan memori yang sudah di-malloc untuk menghindari memory leaks
     free(p);
     free(gantt);
     free(preemption_logs);
