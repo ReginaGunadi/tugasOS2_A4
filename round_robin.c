@@ -1,10 +1,9 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 // Struktur data untuk proses (PCB)
 struct Process {
-    char pid[30];
+    char pid[10];
     int arrival_time;
     int burst_time;
     int remaining_time;
@@ -12,7 +11,7 @@ struct Process {
 
 // Struktur untuk menyimpan data balok Gantt Chart
 struct GanttBlock {
-    char pid[30];
+    char pid[10];
     int start;
     int end;
 };
@@ -87,13 +86,8 @@ int main() {
     printf("Time Quantum (> 0): ");
     scanf("%d", &time_quantum);
 
-    // Alokasi dinamis untuk array proses berdasarkan input n
-    struct Process *p = (struct Process *)malloc(n * sizeof(struct Process));
-    if (p == NULL) {
-        printf("Alokasi memori gagal!\n");
-        return 1;
-    }
-
+    // Inisialisasi array proses berdasarkan input user
+    struct Process p[100];
     for (int i = 0; i < n; i++) {
         snprintf(p[i].pid, sizeof(p[i].pid), "P%d", i + 1);
         printf("%s - masukkan Arrival Time dan Burst Time: ", p[i].pid);
@@ -115,14 +109,9 @@ int main() {
     }
     printf("=======================================================================\n\n");
 
-    // Simulasi Round Robin dengan Gantt Chart dan Preemption Logs yang dinamis (bisa resize pakai realloc)
-    int gantt_capacity = 100;
+    // Simulasi Round Robin
+    struct GanttBlock gantt[100];
     int gantt_count = 0;
-    struct GanttBlock *gantt = (struct GanttBlock *)malloc(gantt_capacity * sizeof(struct GanttBlock));
-
-    int preemption_capacity = 100;
-    int preemption_count = 0;
-    struct PreemptionLog *preemption_logs = (struct PreemptionLog *)malloc(preemption_capacity * sizeof(struct PreemptionLog));
 
     int current_time = 0;
     int completed = 0;
@@ -175,8 +164,6 @@ int main() {
                         in_queue[i] = 1;
                     }
                 }
-            } else {
-                current_time++;
             }
             continue;
         }
@@ -190,17 +177,12 @@ int main() {
         }
         last_process_idx = idx;
 
+    
         int exec_time;
         if (p[idx].remaining_time > time_quantum) {
             exec_time = time_quantum;
         } else {
             exec_time = p[idx].remaining_time;
-        }
-
-        // Resize gantt array jika kapasitas penuh
-        if (gantt_count >= gantt_capacity) {
-            gantt_capacity *= 2;
-            gantt = (struct GanttBlock *)realloc(gantt, gantt_capacity * sizeof(struct GanttBlock));
         }
 
         // Catat ke Gantt Chart
@@ -212,18 +194,6 @@ int main() {
         
         gantt[gantt_count].end = current_time;
         gantt_count++;
-
-        // Cek apakah quantum habis tapi proses belum selesai (preemption)
-        if (exec_time == time_quantum && p[idx].remaining_time > 0) {
-            if (preemption_count >= preemption_capacity) {
-                preemption_capacity *= 2;
-                preemption_logs = (struct PreemptionLog *)realloc(preemption_logs, preemption_capacity * sizeof(struct PreemptionLog));
-            }
-            preemption_logs[preemption_count].time = current_time;
-            strcpy(preemption_logs[preemption_count].pid, p[idx].pid);
-            preemption_logs[preemption_count].remaining_time = p[idx].remaining_time;
-            preemption_count++;
-        }
 
         // Cek proses lain yang baru datang
         for (int i = 0; i < n; i++) {
@@ -239,6 +209,7 @@ int main() {
             completed++;
         }
     }
+
 
     // Bagian 2: Gantt Chart / Timeline
     printf("=======================================================================\n");
@@ -259,18 +230,8 @@ int main() {
         printf("%*d", space_len, gantt[i].end);
     }
     printf("\n");
+    printf("=======================================================================\n");
 
-    // Bagian Quantum and Preemption Information
-    printf("=======================================================================\n");
-    printf("QUANTUM AND PREEMPTION INFORMATION\n");
-    printf("=======================================================================\n");
-    for (int i = 0; i < preemption_count; i++) {
-        printf("t=%d : quantum %s habis (sisa BT=%d) -> READY\n",
-        preemption_logs[i].time,
-        preemption_logs[i].pid,
-        preemption_logs[i].remaining_time);
-    }
-    printf("Total Preemption : %d\n", preemption_count);
 
     // Bagian 3: Scheduling Table
     // CT dan first start dicari dari array gantt[]
@@ -308,7 +269,7 @@ int main() {
     printf("=======================================================================\n");
 
     // Bagian 5: Utilisasi CPU dan Throughput
-    // Rumus: CPU Utilization = (CPU Busy Time/Total Simulation Time) * 100%
+    // Rumus: CPU  Utilization = (CPU Busy Time/Total Simulation Time) * 100%
     //        Throughput = Jumlah Process Selesai/Total Simulation Time
     double total_simulation_time = current_time;   // waktu selesai proses 
     double total_busy_time = 0;                    // burst time (waktu kerja CPU)
@@ -325,11 +286,13 @@ int main() {
     printf("CPU Utilization      : %.2f%%\n", cpu_util);
     printf("Throughput           : %.2f process/time unit\n", throughput);
 
+
     // Bagian 6: Context Switch Information
     printf("=======================================================================\n");
     printf("CONTEXT SWITCH INFORMATION\n");
     printf("=======================================================================\n");
     printf("Total Context Switch : %d\n", context_switch_counter);
+
 
     // Bagian 7: Process State Transitions
     printf("=======================================================================\n");

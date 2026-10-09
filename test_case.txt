@@ -2,9 +2,162 @@ Test Case 1:
 
 Test Case 2: 
 
-Test Case 3: 
+Test Case 3 (Burst Time Berbeda Signifikan):
+Input :
+    Jumlah proses : 4
+    Time quantum : 3
+    Process 1 arrival time - burst time : 0 12
+    Process 2 arrival time - burst time : 0 2
+    Process 3 arrival time - burst time : 2 7
+    Process 4 arrival time - burst time : 5 3
 
-Test Case 4: 
+Output :
+    Bagian 1 :
+        Time Quantum : 3
+        PID        Arrival Time     Burst Time
+        -----------------------------------------------------------------------
+        P1                  0             12
+        P2                  0              2
+        P3                  2              7
+        P4                  5              3
+    Bagian 2 :
+        | P1 | P2 | P3 | P1 | P4 | P3 | P1 | P3 | P1 |
+        0    3    5    8   11   14   17   20   21   24
+    Bagian Output Khusus :
+        t=3  : quantum P1 habis (sisa BT=9) -> READY
+        t=8  : quantum P3 habis (sisa BT=4) -> READY
+        t=11 : quantum P1 habis (sisa BT=6) -> READY
+        t=17 : quantum P3 habis (sisa BT=1) -> READY
+        t=20 : quantum P1 habis (sisa BT=3) -> READY
+        Total Preemption : 5
+    Bagian 3 :
+        PID      AT     BT     CT     TAT    WT     RT    
+        -----------------------------------------------------------------------
+        P1       0      12     24     24     12     0     
+        P2       0      2      5      5      3      3     
+        P3       2      7      21     19     12     3     
+        P4       5      3      14     9      6      6
+    Bagian 4 :
+        Average Waiting Time    : 8.25
+        Average Turnaround Time : 14.25
+        Average Response Time   : 3.00
+    Bagian 5 :
+        CPU Utilization      : 100.00%
+        Throughput           : 0.17 process/time unit
+    Bagian 6 :
+        Total Context Switch : 8
+    Bagian 7 :
+        P1: NEW -> READY(t=0) -> RUNNING(t=0) -> READY(t=3) -> RUNNING(t=8) -> READY(t=11) -> RUNNING(t=17) -> READY(t=20) -> RUNNING(t=21) -> TERMINATED(t=24)
+        P2: NEW -> READY(t=0) -> RUNNING(t=3) -> TERMINATED(t=5)
+        P3: NEW -> READY(t=2) -> RUNNING(t=5) -> READY(t=8) -> RUNNING(t=14) -> READY(t=17) -> RUNNING(t=20) -> TERMINATED(t=21)
+        P4: NEW -> READY(t=5) -> RUNNING(t=11) -> TERMINATED(t=14)
+
+Test Case 4 (Banyak Proses: 15 Proses)
+Input :
+    Jumlah proses : 15
+    Time quantum : 2
+    Process 1 arrival time - burst time : 0 4
+    Process 2 arrival time - burst time : 0 6
+    Process 3 arrival time - burst time : 1 2
+    Process 4 arrival time - burst time : 2 8
+    Process 5 arrival time - burst time : 3 3
+    Process 6 arrival time - burst time : 3 1
+    Process 7 arrival time - burst time : 4 5
+    Process 8 arrival time - burst time : 5 2
+    Process 9 arrival time - burst time : 6 7
+    Process 10 arrival time - burst time : 7 3
+    Process 11 arrival time - burst time : 8 1
+    Process 12 arrival time - burst time : 9 6
+    Process 13 arrival time - burst time : 10 4
+    Process 14 arrival time - burst time : 11 2
+    Process 15 arrival time - burst time : 12 5
+
+Output :
+    Bagian 1 :
+        Time Quantum : 2
+        PID                  Arrival Time           Burst Time
+        -----------------------------------------------------------------------
+        P1                              0                    4
+        P2                              0                    6
+        P3                              1                    2
+        P4                              2                    8
+        P5                              3                    3
+        P6                              3                    1
+        P7                              4                    5
+        P8                              5                    2
+        P9                              6                    7
+        P10                             7                    3
+        P11                             8                    1
+        P12                             9                    6
+        P13                            10                    4
+        P14                            11                    2
+        P15                            12                    5
+    Bagian 2 :
+        | P1 | P2 | P3 | P4 | P1 | P5 | P6 | P7 | P2 | P8 | P9 | P10 | P11 | P4 | P12 | P13 | P14 | P15 | P5 | P7 | P2 | P9 | P10 | P4 | P12 | P13 | P15 | P7 | P9 | P4 | P12 | P15 | P9 |
+        0    2    4    6    8    10   12   13   15   17   19   21    23    24   26    28    30    32    34   35   37   39   41    42   44    46    48    50   51   53   55    57    58   59
+    Bagian Output Khusus :
+        t=2 : quantum P1 habis (sisa BT=2) -> READY
+        t=4 : quantum P2 habis (sisa BT=4) -> READY
+        t=8 : quantum P4 habis (sisa BT=6) -> READY
+        t=12 : quantum P5 habis (sisa BT=1) -> READY
+        t=15 : quantum P7 habis (sisa BT=3) -> READY
+        t=17 : quantum P2 habis (sisa BT=2) -> READY
+        t=21 : quantum P9 habis (sisa BT=5) -> READY
+        t=23 : quantum P10 habis (sisa BT=1) -> READY
+        t=26 : quantum P4 habis (sisa BT=4) -> READY
+        t=28 : quantum P12 habis (sisa BT=4) -> READY
+        t=30 : quantum P13 habis (sisa BT=2) -> READY
+        t=34 : quantum P15 habis (sisa BT=3) -> READY
+        t=37 : quantum P7 habis (sisa BT=1) -> READY
+        t=41 : quantum P9 habis (sisa BT=3) -> READY
+        t=44 : quantum P4 habis (sisa BT=2) -> READY
+        t=46 : quantum P12 habis (sisa BT=2) -> READY
+        t=50 : quantum P15 habis (sisa BT=1) -> READY
+        t=53 : quantum P9 habis (sisa BT=1) -> READY
+        Total Preemption : 18
+    Bagian 3 :
+        PID      AT     BT     CT     TAT    WT     RT
+        -----------------------------------------------------------------------
+        P1       0      4      10     10     6      0
+        P2       0      6      39     39     33     2
+        P3       1      2      6      5      3      3
+        P4       2      8      55     53     45     4
+        P5       3      3      35     32     29     7
+        P6       3      1      13     10     9      9
+        P7       4      5      51     47     42     9
+        P8       5      2      19     14     12     12
+        P9       6      7      59     53     46     13
+        P10      7      3      42     35     32     14
+        P11      8      1      24     16     15     15
+        P12      9      6      57     48     42     17
+        P13      10     4      48     38     34     18
+        P14      11     2      32     21     19     19
+        P15      12     5      58     46     41     20
+    Bagian 4 :
+        Average Waiting Time    : 27.20
+        Average Turnaround Time : 31.13
+        Average Response Time   : 10.80
+    Bagian 5 :
+        CPU Utilization      : 100.00%
+        Throughput           : 0.25 process/time unit
+    Bagian 6 :
+        Total Context Switch : 32
+    Bagian 7 :
+        P1: NEW -> READY(t=0) -> RUNNING(t=0) -> READY(t=2) -> RUNNING(t=8) -> TERMINATED(t=10)
+        P2: NEW -> READY(t=0) -> RUNNING(t=2) -> READY(t=4) -> RUNNING(t=15) -> READY(t=17) -> RUNNING(t=37) -> TERMINATED(t=39)
+        P3: NEW -> READY(t=1) -> RUNNING(t=4) -> TERMINATED(t=6)
+        P4: NEW -> READY(t=2) -> RUNNING(t=6) -> READY(t=8) -> RUNNING(t=24) -> READY(t=26) -> RUNNING(t=42) -> READY(t=44) -> RUNNING(t=53) -> TERMINATED(t=55)
+        P5: NEW -> READY(t=3) -> RUNNING(t=10) -> READY(t=12) -> RUNNING(t=34) -> TERMINATED(t=35)
+        P6: NEW -> READY(t=3) -> RUNNING(t=12) -> TERMINATED(t=13)
+        P7: NEW -> READY(t=4) -> RUNNING(t=13) -> READY(t=15) -> RUNNING(t=35) -> READY(t=37) -> RUNNING(t=50) -> TERMINATED(t=51)
+        P8: NEW -> READY(t=5) -> RUNNING(t=17) -> TERMINATED(t=19)
+        P9: NEW -> READY(t=6) -> RUNNING(t=19) -> READY(t=21) -> RUNNING(t=39) -> READY(t=41) -> RUNNING(t=51) -> READY(t=53) -> RUNNING(t=58) -> TERMINATED(t=59)
+        P10: NEW -> READY(t=7) -> RUNNING(t=21) -> READY(t=23) -> RUNNING(t=41) -> TERMINATED(t=42)
+        P11: NEW -> READY(t=8) -> RUNNING(t=23) -> TERMINATED(t=24)
+        P12: NEW -> READY(t=9) -> RUNNING(t=26) -> READY(t=28) -> RUNNING(t=44) -> READY(t=46) -> RUNNING(t=55) -> TERMINATED(t=57)
+        P13: NEW -> READY(t=10) -> RUNNING(t=28) -> READY(t=30) -> RUNNING(t=46) -> TERMINATED(t=48)
+        P14: NEW -> READY(t=11) -> RUNNING(t=30) -> TERMINATED(t=32)
+        P15: NEW -> READY(t=12) -> RUNNING(t=32) -> READY(t=34) -> RUNNING(t=48) -> READY(t=50) -> RUNNING(t=57) -> TERMINATED(t=58)
 
 Test Case 5 (Edge Case: No Priority + CPU Idle Condition)
 Input : 
