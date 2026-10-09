@@ -16,20 +16,68 @@ struct GanttBlock {
     int end;
 };
 
+struct PreemptionLog {
+    int time;
+    char pid[30];
+    int remaining_time;
+};
+
+struct QueueNode {
+    struct QueueNode *next;
+    int value;
+};
+
+struct Queue {
+    struct QueueNode *front;
+    struct QueueNode *rear;
+};
+
+void queue_enqueue(struct Queue* q, int value) {
+    struct QueueNode* node = (struct QueueNode *) malloc(sizeof(struct QueueNode));
+    if (!node) return;
+
+    node->value = value;
+    node->next = NULL;
+
+    if (q->rear) {
+        q->rear->next = node;
+    } else {
+        q->front = node;
+    }
+
+    q->rear = node;
+}
+
+int queue_dequeue(struct Queue *q) {
+    if (q->front == NULL) return -1;
+
+    struct QueueNode* node = q->front;
+    int value = node->value;
+
+    q->front = node->next;
+    if (q->front == NULL) {
+        q->rear = NULL;
+    }
+
+    free(node);
+    return value;
+}
+
+void queue_free(struct Queue *q) {
+    struct QueueNode* node = q->front;
+
+    while (node) {
+        struct QueueNode* next = node->next;
+        free(node);
+        node = next;
+    }
+
+    q->front = NULL;
+    q->rear = NULL;
+}
+
 // Main code
 int main() {
-    // // Jumlah proses dan Time Quantum untuk Round Robin
-    // int n = 4;
-    // int time_quantum = 2;
-
-    // // Inisialisasi data proses [process num, arrival time, burst time, remaining time]
-    // struct Process p[4] = {
-    //     {"P1", 0, 8, 8},
-    //     {"P2", 1, 4, 4},
-    //     {"P3", 2, 2, 2},
-    //     {"P4", 3, 5, 5}
-    // };
-
     int n, time_quantum;
 
     // Input jumlah proses dan time quantum
@@ -68,10 +116,9 @@ int main() {
     int current_time = 0;
     int completed = 0;
     
-    // Queue
-    int queue[100];
-    int front = 0, rear = 0;
-    int in_queue[100] = {0};
+    // Alokasi dinamis untuk Queue dan In-Queue tracker
+    struct Queue queue = {0};
+    int *in_queue = (int *)calloc(n, sizeof(int)); // calloc otomatis set nilai awal ke 0
 
     // Bagian 6: Menghitung context switch
     int context_switch_counter = 0; 
@@ -79,32 +126,50 @@ int main() {
 
     for (int i = 0; i < n; i++) {
         if (p[i].arrival_time <= current_time) {
-            queue[rear++] = i;
+            queue_enqueue(&queue, i);
             in_queue[i] = 1;
         }
     }
 
-    if (rear == 0) {
-        current_time = p[0].arrival_time;
-        queue[rear++] = 0;
-        in_queue[0] = 1;
-    }
-
     // Looping utama scheduling sampai semua proses selesai
     while (completed < n) {
-        if (front == rear) {
-            current_time++;
+        if (queue.front == NULL) {
+            int next_arrival = -1;
             for (int i = 0; i < n; i++) {
-                if (p[i].arrival_time <= current_time && p[i].remaining_time > 0 && !in_queue[i]) {
-                    queue[rear++] = i;
-                    in_queue[i] = 1;
+                if (p[i].remaining_time > 0 && p[i].arrival_time > current_time) {
+                    if (next_arrival == -1 || p[i].arrival_time < next_arrival) {
+                        next_arrival = p[i].arrival_time;
+                    }
+                }
+            }
+
+            if (next_arrival != -1) {
+                // Resize gantt array jika kapasitas penuh
+                if (gantt_count >= gantt_capacity) {
+                    gantt_capacity *= 2;
+                    gantt = (struct GanttBlock *)realloc(gantt, gantt_capacity * sizeof(struct GanttBlock));
+                }
+
+                strcpy(gantt[gantt_count].pid, "Idle");
+                gantt[gantt_count].start = current_time;
+                gantt[gantt_count].end = next_arrival;
+                gantt_count++;
+
+                current_time = next_arrival;
+
+                // Masukkan proses yang datang pada waktu tersebut ke queue
+                for (int i = 0; i < n; i++) {
+                    if (p[i].arrival_time <= current_time && p[i].remaining_time > 0 && !in_queue[i]) {
+                        queue_enqueue(&queue, i);
+                        in_queue[i] = 1;
+                    }
                 }
             }
             continue;
         }
 
         // Ambil proses dari depan antrean
-        int idx = queue[front++];
+        int idx = queue_dequeue(&queue);
 
         // Bagian 6: Perbarui jumlah context switch bila process idx != process idx sebelumnya
         if (last_process_idx != -1 && idx != last_process_idx){
@@ -133,13 +198,13 @@ int main() {
         // Cek proses lain yang baru datang
         for (int i = 0; i < n; i++) {
             if (p[i].arrival_time <= current_time && p[i].remaining_time > 0 && !in_queue[i]) {
-                queue[rear++] = i;
+                queue_enqueue(&queue, i);
                 in_queue[i] = 1;
             }
         }
 
         if (p[idx].remaining_time > 0) {
-            queue[rear++] = idx;
+            queue_enqueue(&queue, idx);
         } else {
             completed++;
         }
@@ -252,6 +317,13 @@ int main() {
 
         printf(" -> TERMINATED(t=%d)\n", end);
     }
+
+    // Bebaskan memori yang sudah di-malloc untuk menghindari memory leaks
+    free(p);
+    free(gantt);
+    free(preemption_logs);
+    queue_free(&queue);
+    free(in_queue);
 
     return 0;
 }
