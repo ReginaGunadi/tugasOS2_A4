@@ -7,7 +7,7 @@ Anggota Kelompok:
 - M. Rezky Syahputra (rezkyrise)
 
 Pembagian tugas:
-1. Pembuatan round_robin.c
+1. Pembuatan scheduler.c
     - Bagian 1 - Informasi Input Process [CELINE]
     - Bagian 2 - Gantt Chart / CPU Execution Timeline [CELINE]
     - Bagian 3 - Scheduling Table [REZKY]
