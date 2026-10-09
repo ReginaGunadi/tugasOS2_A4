@@ -25,11 +25,11 @@ Output :
     Bagian 2 : 
         | P1 | P2 | P1 | P2 | P1 | Idle | P3 |
         0    2    4    6    7    8      10   12
-
+    Bagian Output Khusus :
         t=2 : quantum P1 habis (sisa BT=3) -> READY
         t=4 : quantum P2 habis (sisa BT=1) -> READY
         t=6 : quantum P1 habis (sisa BT=1) -> READY
-        Total Preemption : 3
+        Total Preemption : 3 
     Bagian 3 :
         PID      AT     BT     CT     TAT    WT     RT    
         -----------------------------------------------------------------------
